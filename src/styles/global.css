@@ -1,0 +1,287 @@
+/* ============================================================
+   POPCORN Stream — Global Styles
+   Color Palette inspired by original POPCORN cinema project
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap');
+
+/* ── CSS Variables ─────────────────────────────────────────── */
+:root {
+  /* Original POPCORN palette — enhanced */
+  --primary:        #DB0000;
+  --primary-dark:   #a80000;
+  --primary-light:  #ff2020;
+  --primary-glow:   rgba(219, 0, 0, 0.35);
+  --primary-glow-sm:rgba(219, 0, 0, 0.15);
+
+  /* Backgrounds */
+  --bg-root:        #080808;
+  --bg-dark:        #0e0e0e;
+  --bg-card:        #161616;
+  --bg-card-hover:  #1e1e1e;
+  --bg-nav:         rgba(8, 8, 8, 0.85);
+  --bg-glass:       rgba(255, 255, 255, 0.04);
+  --bg-glass-hover: rgba(255, 255, 255, 0.08);
+  --bg-overlay:     rgba(0, 0, 0, 0.75);
+
+  /* Text */
+  --text-primary:   #ffffff;
+  --text-secondary: #a0a0a0;
+  --text-muted:     #5a5a5a;
+  --text-accent:    #DB0000;
+
+  /* Borders */
+  --border:         rgba(255, 255, 255, 0.08);
+  --border-accent:  rgba(219, 0, 0, 0.4);
+
+  /* Gradients */
+  --gradient-hero:  linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 60%, transparent 100%);
+  --gradient-card:  linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+  --gradient-row:   linear-gradient(to right, var(--bg-dark) 0%, transparent 5%, transparent 95%, var(--bg-dark) 100%);
+
+  /* Spacing */
+  --nav-height:     70px;
+  --container-pad:  clamp(16px, 5vw, 80px);
+
+  /* Radius */
+  --radius-sm:      6px;
+  --radius-md:      12px;
+  --radius-lg:      20px;
+
+  /* Shadows */
+  --shadow-card:    0 8px 32px rgba(0,0,0,0.6);
+  --shadow-glow:    0 0 24px var(--primary-glow);
+  --shadow-nav:     0 2px 20px rgba(0,0,0,0.8);
+
+  /* Transitions */
+  --transition:     all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast:all 0.15s ease;
+  --transition-slow:all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Reset ─────────────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  background-color: var(--bg-root);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary-light); }
+
+/* ── Links ──────────────────────────────────────────────────── */
+a { text-decoration: none; color: inherit; }
+
+/* ── Images ─────────────────────────────────────────────────── */
+img { display: block; max-width: 100%; }
+
+/* ── Buttons base ───────────────────────────────────────────── */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: var(--transition);
+}
+
+/* ── Input base ─────────────────────────────────────────────── */
+input, textarea {
+  font-family: inherit;
+  outline: none;
+  border: none;
+}
+
+/* ── Selection ──────────────────────────────────────────────── */
+::selection {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* ── Utility classes ────────────────────────────────────────── */
+.container {
+  width: 100%;
+  padding: 0 var(--container-pad);
+}
+
+.section-title {
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-title::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 1.4em;
+  background: var(--primary);
+  border-radius: 2px;
+  box-shadow: 0 0 10px var(--primary-glow);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--primary);
+  color: #fff;
+}
+
+.badge-outline {
+  background: transparent;
+  border: 1px solid var(--border-accent);
+  color: var(--primary);
+}
+
+/* Shimmer animation for skeletons */
+@keyframes shimmer {
+  0%   { background-position: -1000px 0; }
+  100% { background-position:  1000px 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%);
+  background-size: 1000px 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in { animation: fadeIn 0.5s ease forwards; }
+
+/* ── Page layout ────────────────────────────────────────────── */
+.page-wrapper {
+  padding-top: var(--nav-height);
+  min-height: 100vh;
+}
+
+/* ── Glassmorphism card ─────────────────────────────────────── */
+.glass-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+/* ── Red glow button ─────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+  transition: var(--transition);
+  box-shadow: 0 4px 20px var(--primary-glow);
+}
+
+.btn-primary:hover {
+  background: var(--primary-light);
+  box-shadow: 0 6px 28px var(--primary-glow);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  color: #fff;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-glass-hover);
+  border-color: rgba(255,255,255,0.2);
+  transform: translateY(-1px);
+}
+
+/* ── Star rating colors ─────────────────────────────────────── */
+.rating-high   { color: #f5c518; }
+.rating-medium { color: #ffa500; }
+.rating-low    { color: var(--primary); }
+
+/* ── Empty state ────────────────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.empty-state svg {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  color: var(--text-muted);
+}
+
+.empty-state h3 {
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+}
+
+.empty-state p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* ── Error state ─────────────────────────────────────────────── */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.error-state h3 { color: var(--primary); font-size: 1.2rem; }
+.error-state p  { color: var(--text-secondary); font-size: 0.9rem; }
+
+/* ── Responsive helpers ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  :root { --container-pad: 16px; }
+}

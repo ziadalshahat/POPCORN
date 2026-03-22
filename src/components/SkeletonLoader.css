@@ -1,0 +1,62 @@
+.skeleton-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-card__poster {
+  width: 100%;
+  aspect-ratio: 2/3;
+  border-radius: var(--radius-md);
+}
+
+.skeleton-card__title {
+  height: 14px;
+  border-radius: 6px;
+  width: 85%;
+}
+
+.skeleton-card__meta {
+  height: 12px;
+  border-radius: 6px;
+  width: 50%;
+}
+
+.skeleton-detail {
+  width: 100%;
+}
+
+.skeleton-detail__backdrop {
+  width: 100%;
+  height: 420px;
+}
+
+.skeleton-detail__body {
+  display: flex;
+  gap: 40px;
+  padding: 40px var(--container-pad);
+}
+
+.skeleton-detail__poster {
+  width: 220px;
+  height: 330px;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.skeleton-detail__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.skeleton-text {
+  border-radius: 6px;
+}
+
+.skeleton-text-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

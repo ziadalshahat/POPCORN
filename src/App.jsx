@@ -1,0 +1,34 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import HomePage from './pages/HomePage';
+import MovieDetailPage from './pages/MovieDetailPage';
+import SearchPage from './pages/SearchPage';
+import GenresPage from './pages/GenresPage';
+import AuthPage from './pages/AuthPage';
+import WatchlistPage from './pages/WatchlistPage';
+import { AuthProvider } from './context/AuthContext';
+import { WatchlistProvider } from './context/WatchlistContext';
+
+function App() {
+  return (
+    <AuthProvider>
+      <WatchlistProvider>
+        <BrowserRouter>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/movie/:id" element={<MovieDetailPage />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/genres" element={<GenresPage />} />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/watchlist" element={<WatchlistPage />} />
+          </Routes>
+          <Footer />
+        </BrowserRouter>
+      </WatchlistProvider>
+    </AuthProvider>
+  );
+}
+
+export default App;
