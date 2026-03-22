@@ -7,8 +7,10 @@ import SearchPage from './pages/SearchPage';
 import GenresPage from './pages/GenresPage';
 import AuthPage from './pages/AuthPage';
 import WatchlistPage from './pages/WatchlistPage';
+import NotFoundPage from './pages/NotFoundPage';
 import { AuthProvider } from './context/AuthContext';
 import { WatchlistProvider } from './context/WatchlistContext';
+import { Analytics } from "@vercel/analytics/react"
 
 function App() {
   return (
@@ -23,8 +25,11 @@ function App() {
             <Route path="/genres" element={<GenresPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/watchlist" element={<WatchlistPage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
           <Footer />
+          
+          <Analytics />
         </BrowserRouter>
       </WatchlistProvider>
     </AuthProvider>
