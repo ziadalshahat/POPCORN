@@ -1,7 +1,3 @@
-/* ============================================================
-   POPCORN Stream — Global Styles
-   Color Palette inspired by original POPCORN cinema project
-   ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap');
 
@@ -119,6 +115,7 @@ input, textarea {
 .container {
   width: 100%;
   padding: 0 var(--container-pad);
+  margin-bottom: 20px;
 }
 
 .section-title {
