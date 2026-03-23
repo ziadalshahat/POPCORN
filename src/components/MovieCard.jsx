@@ -5,11 +5,6 @@ import { buildImageUrl, POSTER_SIZE } from '../api/tmdb';
 import { useWatchlist } from '../context/WatchlistContext';
 import './MovieCard.css';
 
-/**
- * MovieCard — Netflix-style card with hover overlay
- * Shows poster, on hover reveals title, rating, overview snippet,
- * play button, and watchlist toggle.
- */
 function MovieCard({ movie }) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const navigate  = useNavigate();
@@ -53,10 +48,6 @@ function MovieCard({ movie }) {
           </div>
         )}
 
-        {/* Rating badge */}
-        <div className={`movie-card__rating ${ratingClass}`}>
-          ⭐ {rating}
-        </div>
 
         {/* Hover overlay */}
         <div className="movie-card__overlay">

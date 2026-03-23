@@ -7,3 +7,9 @@
   padding-top: 40px;
   padding-bottom: 40px;
 }
+
+@media (max-width: 768px) {
+  .home-page__rows {
+    padding-top: 60px;
+  }
+}
