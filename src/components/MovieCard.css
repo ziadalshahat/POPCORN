@@ -145,3 +145,9 @@
 @media (hover: none) {
   .movie-card__overlay { opacity: 1; }
 }
+
+@media (max-width: 768px) {
+  .movie-card__overview {
+    display: none;
+  }
+}
