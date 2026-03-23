@@ -147,7 +147,9 @@
 }
 
 @media (max-width: 768px) {
-  .movie-card__overview {
+  .movie-card__overview,
+  .movie-card__title,
+  .movie-card__year {
     display: none;
   }
 }
