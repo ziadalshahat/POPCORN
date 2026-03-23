@@ -65,10 +65,6 @@ function Footer() {
 
       <div className="footer__bottom container">
         <p>© 2024–2025 SIA <strong>POPCORN</strong> Stream. All rights reserved.</p>
-        <p className="footer__tmdb">
-          <img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_short-8e7b30f73a4020692ccca9c88bafe5dcb20f684cf8b4a25519c4a1961947acd5.svg" alt="TMDB" />
-          This product uses the TMDB API but is not endorsed or certified by TMDB.
-        </p>
       </div>
     </footer>
   );

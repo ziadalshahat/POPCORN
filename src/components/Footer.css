@@ -93,6 +93,8 @@
 .footer__bottom p {
   color: var(--text-muted);
   font-size: 0.78rem;
+  text-align: center;
+  padding: 15px;
 }
 
 .footer__tmdb {

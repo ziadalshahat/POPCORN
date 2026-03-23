@@ -15,6 +15,7 @@
   gap: 14px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--container-pad);
   scrollbar-width: none;
   -ms-overflow-style: none;
   padding: 8px var(--container-pad) 16px;
@@ -25,6 +26,7 @@
 .movie-row__item {
   flex: 0 0 160px;
   scroll-snap-align: start;
+  min-width: 0;
 }
 
 /* Arrows */
