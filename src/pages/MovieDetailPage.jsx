@@ -1,13 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { getMovieDetails, getMovieVideos, getSimilarMovies, buildImageUrl, BACKDROP_SIZE, POSTER_SIZE, getTrailerKey } from '../api/tmdb';
+import { useTranslation } from 'react-i18next';
+import { getMovieDetails, getMovieVideos, getSimilarMovies, getMovieProviders, buildImageUrl, BACKDROP_SIZE, POSTER_SIZE, getTrailerKey } from '../api/tmdb';
 import { useWatchlist } from '../context/WatchlistContext';
 import MovieRow from '../components/MovieRow';
 import SkeletonLoader from '../components/SkeletonLoader';
+import ActorCard from '../components/ActorCard';
 import './MovieDetailPage.css';
 
 function MovieDetailPage() {
+  const { t }    = useTranslation();
   const { id }   = useParams();
   const navigate = useNavigate();
   const { toggleWatchlist, isInWatchlist } = useWatchlist();
@@ -15,9 +18,27 @@ function MovieDetailPage() {
   const [movie, setMovie]       = useState(null);
   const [trailerKey, setTrailerKey] = useState(null);
   const [similar, setSimilar]   = useState([]);
+  const [providers, setProviders] = useState([]);
+  const [providerLink, setProviderLink] = useState('');
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState(null);
   const [showTrailer, setShowTrailer] = useState(false);
+
+  const castRowRef = useRef(null);
+
+  const scrollCast = (direction) => {
+    if (!castRowRef.current) return;
+    const el = castRowRef.current;
+    const amount = el.offsetWidth * 0.7;
+    const isRTL = document.dir === 'rtl';
+
+    // In LTR: prev = -amount, next = +amount
+    // In RTL: prev = +amount, next = -amount
+    const sign = direction === 'prev' ? -1 : 1;
+    const scrollVal = isRTL ? -sign * amount : sign * amount;
+
+    el.scrollBy({ left: scrollVal, behavior: 'smooth' });
+  };
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -29,27 +50,36 @@ function MovieDetailPage() {
       getMovieDetails(id),
       getMovieVideos(id),
       getSimilarMovies(id),
+      getMovieProviders(id),
     ])
-      .then(([detailRes, videoRes, similarRes]) => {
+      .then(([detailRes, videoRes, similarRes, providersRes]) => {
         setMovie(detailRes.data);
         setTrailerKey(getTrailerKey(videoRes.data));
         setSimilar(similarRes.data.results);
+        
+        const allProviders = providersRes.data.results || {};
+        const cp = allProviders.US || allProviders.GB || Object.values(allProviders)[0];
+        const combined = [...(cp?.flatrate || []), ...(cp?.rent || []), ...(cp?.buy || [])];
+        const unique = Array.from(new Map(combined.map(p => [p.provider_id, p])).values());
+        setProviders(unique);
+        setProviderLink(cp?.link || '');
+        
         setLoading(false);
       })
       .catch((err) => {
         setError(err.message);
         setLoading(false);
       });
-  }, [id]);
+  }, [id, t]);
 
   if (loading) return <div className="page-wrapper"><SkeletonLoader type="detail" /></div>;
 
   if (error || !movie) {
     return (
       <div className="page-wrapper error-state">
-        <h3>Could not load movie</h3>
+        <h3>{t('details.couldNotLoad')}</h3>
         <p>{error}</p>
-        <button className="btn-primary" onClick={() => navigate(-1)}>Go Back</button>
+        <button className="btn-primary" onClick={() => navigate(-1)}>{t('details.goBack')}</button>
       </div>
     );
   }
@@ -88,14 +118,14 @@ function MovieDetailPage() {
           {poster ? (
             <img src={poster} alt={movie.title} />
           ) : (
-            <div className="detail-page__no-poster">No Image</div>
+            <div className="detail-page__no-poster">{t('details.noImage')}</div>
           )}
           {/* Watchlist below poster */}
           <button
             className={`detail-page__watchlist ${inList ? 'active' : ''}`}
             onClick={() => toggleWatchlist(movie)}
           >
-            {inList ? '✓ In Watchlist' : '+ Add to Watchlist'}
+            {inList ? t('details.inWatchlist') : t('details.addToWatchlist')}
           </button>
         </motion.div>
 
@@ -132,13 +162,57 @@ function MovieDetailPage() {
           {/* Cast */}
           {movie.credits?.cast?.length > 0 && (
             <div className="detail-page__cast">
-              <h4>Cast</h4>
-              <p>
-                {movie.credits.cast
-                  .slice(0, 5)
-                  .map((a) => a.name)
-                  .join(' · ')}
-              </p>
+              <h4>{t('details.cast')}</h4>
+              <div className="detail-page__cast-wrapper">
+                <button
+                  className="cast-arrow cast-arrow--prev"
+                  onClick={() => scrollCast('prev')}
+                  aria-label={t('common.scrollLeft')}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <path d="M15 18l-6-6 6-6" />
+                  </svg>
+                </button>
+
+                <div className="detail-page__cast-list" ref={castRowRef}>
+                  {movie.credits.cast.slice(0, 15).map((actor, i) => (
+                    <div key={actor.id} className="detail-page__cast-item">
+                      <ActorCard actor={actor} delay={i * 0.05} />
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  className="cast-arrow cast-arrow--next"
+                  onClick={() => scrollCast('next')}
+                  aria-label={t('common.scrollRight')}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <path d="M9 18l6-6-6-6" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Where to Watch (Providers) */}
+          {providers && providers.length > 0 && (
+            <div className="detail-page__providers">
+              <h4>{t('details.whereToWatch')}</h4>
+              <div className="providers-list">
+                {providers.map((p) => (
+                  <a
+                    key={p.provider_id}
+                    className="provider-icon"
+                    href={providerLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={p.provider_name}
+                  >
+                    <img src={buildImageUrl(p.logo_path, '/w92')} alt={p.provider_name} />
+                  </a>
+                ))}
+              </div>
             </div>
           )}
 
@@ -152,7 +226,7 @@ function MovieDetailPage() {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M8 5v14l11-7z" />
                 </svg>
-                Watch Trailer
+                {t('details.watchTrailer')}
               </button>
             )}
 
@@ -160,7 +234,7 @@ function MovieDetailPage() {
               className="btn-secondary"
               onClick={() => navigate(-1)}
             >
-              ← Back
+              {t('details.back')}
             </button>
           </div>
         </motion.div>
@@ -189,7 +263,7 @@ function MovieDetailPage() {
       {/* Similar movies */}
       {similar.length > 0 && (
         <div className="detail-page__similar">
-          <MovieRow title="You May Also Like" movies={similar} />
+          <MovieRow title={t('details.similarMovies')} movies={similar} />
         </div>
       )}
     </motion.div>

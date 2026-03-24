@@ -1,25 +1,37 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { buildImageUrl, POSTER_SIZE } from '../api/tmdb';
 import { useWatchlist } from '../context/WatchlistContext';
 import './MovieCard.css';
 
-function MovieCard({ movie }) {
+/**
+ * Universal card used for BOTH movies and TV shows.
+ */
+function MovieCard({ item, movie, mediaType }) {
+  const { t } = useTranslation();
+  // Legacy support: old code passes `movie` prop
+  const data = item || movie;
   const [imgLoaded, setImgLoaded] = useState(false);
-  const navigate  = useNavigate();
+  const navigate = useNavigate();
   const { toggleWatchlist, isInWatchlist } = useWatchlist();
 
-  if (!movie) return null;
+  if (!data) return null;
 
-  const poster  = buildImageUrl(movie.poster_path, POSTER_SIZE);
-  const rating  = movie.vote_average?.toFixed(1);
-  const year    = movie.release_date?.slice(0, 4);
-  const inList  = isInWatchlist(movie.id);
+  // ── Unified field resolution ─────────────────────────────────
+  const resolvedType  = data.media_type || mediaType || 'movie';
+  const title         = data.title || data.name || 'Untitled';
+  const dateStr       = data.release_date || data.first_air_date || '';
+  const year          = dateStr.slice(0, 4);
+  const rating        = data.vote_average?.toFixed(1);
+  const poster        = buildImageUrl(data.poster_path, POSTER_SIZE);
+  const inList        = isInWatchlist(data.id);
+  const detailPath    = resolvedType === 'tv' ? `/tv/${data.id}` : `/movie/${data.id}`;
 
   const ratingClass =
-    movie.vote_average >= 7 ? 'rating-high' :
-    movie.vote_average >= 5 ? 'rating-medium' : 'rating-low';
+    data.vote_average >= 7 ? 'rating-high' :
+    data.vote_average >= 5 ? 'rating-medium' : 'rating-low';
 
   return (
     <motion.div
@@ -28,12 +40,12 @@ function MovieCard({ movie }) {
       transition={{ duration: 0.25, ease: 'easeOut' }}
     >
       {/* Poster */}
-      <div className="movie-card__poster" onClick={() => navigate(`/movie/${movie.id}`)}>
+      <div className="movie-card__poster" onClick={() => navigate(detailPath)}>
         {!imgLoaded && <div className="movie-card__skeleton shimmer" />}
         {poster ? (
           <img
             src={poster}
-            alt={movie.title}
+            alt={title}
             loading="lazy"
             onLoad={() => setImgLoaded(true)}
             style={{ opacity: imgLoaded ? 1 : 0 }}
@@ -48,19 +60,23 @@ function MovieCard({ movie }) {
           </div>
         )}
 
+        {/* TV badge */}
+        {resolvedType === 'tv' && (
+          <span className="movie-card__type-badge">{t('common.tvLabel')}</span>
+        )}
 
         {/* Hover overlay */}
         <div className="movie-card__overlay">
-          <h3 className="movie-card__title">{movie.title}</h3>
+          <h3 className="movie-card__title">{title}</h3>
           <p className="movie-card__year">{year}</p>
           <p className="movie-card__overview">
-            {movie.overview?.slice(0, 100)}{movie.overview?.length > 100 ? '...' : ''}
+            {data.overview?.slice(0, 100)}{data.overview?.length > 100 ? '...' : ''}
           </p>
           <div className="movie-card__overlay-actions">
             <button
               className="movie-card__play-btn"
-              onClick={(e) => { e.stopPropagation(); navigate(`/movie/${movie.id}`); }}
-              aria-label="Watch"
+              onClick={(e) => { e.stopPropagation(); navigate(detailPath); }}
+              aria-label={t('common.viewDetails')}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M8 5v14l11-7z" />
@@ -68,8 +84,12 @@ function MovieCard({ movie }) {
             </button>
             <button
               className={`movie-card__watchlist-btn ${inList ? 'active' : ''}`}
-              onClick={(e) => { e.stopPropagation(); toggleWatchlist(movie); }}
-              aria-label={inList ? 'Remove from watchlist' : 'Add to watchlist'}
+              onClick={(e) => {
+                e.stopPropagation();
+                // Persist media_type so watchlist knows what route to use
+                toggleWatchlist({ ...data, media_type: resolvedType });
+              }}
+              aria-label={inList ? t('details.removeFromWatchlist') : t('details.addToWatchlist')}
             >
               {inList ? (
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -87,7 +107,7 @@ function MovieCard({ movie }) {
 
       {/* Card footer */}
       <div className="movie-card__footer">
-        <p className="movie-card__name">{movie.title}</p>
+        <p className="movie-card__name">{title}</p>
         <p className="movie-card__meta">{year} · <span className={ratingClass}>⭐ {rating}</span></p>
       </div>
     </motion.div>

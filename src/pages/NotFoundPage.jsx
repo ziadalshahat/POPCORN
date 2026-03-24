@@ -1,12 +1,15 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './NotFoundPage.css';
 
 // PLACEHOLDER: Please replace this URL with your preferred Spiderman vs Venom image or import a local asset
 const battleImageUrl = "https://images.unsplash.com/photo-1635805737707-575885ab0820?auto=format&fit=crop&q=80&w=800"; 
 
 const NotFoundPage = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="not-found-container">
       <div className="not-found-bg" />
@@ -31,8 +34,8 @@ const NotFoundPage = () => {
           >
             404
           </motion.h1>
-          <h2 className="not-found-subtitle">Universe Collapsed</h2>
-          <p className="not-found-description">The web you're trying to swing to doesn't exist.</p>
+          <h2 className="not-found-subtitle">{t('notFound.universeCollapsed')}</h2>
+          <p className="not-found-description">{t('notFound.swingDescription')}</p>
         </motion.div>
 
         <motion.div 
@@ -82,7 +85,7 @@ const NotFoundPage = () => {
               <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
               <polyline points="9 22 9 12 15 12 15 22"/>
             </svg>
-            Return to Homepage
+            {t('notFound.returnHome')}
           </Link>
         </motion.div>
       </div>

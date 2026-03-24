@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { getGenres, getMoviesByGenre } from '../api/tmdb';
 import MovieCard from '../components/MovieCard';
 import SkeletonLoader from '../components/SkeletonLoader';
 import './GenresPage.css';
 
 function GenresPage() {
+  const { t, i18n } = useTranslation();
   const [genres, setGenres]         = useState([]);
   const [activeGenre, setActiveGenre] = useState(null);
   const [movies, setMovies]         = useState([]);
@@ -14,16 +16,17 @@ function GenresPage() {
   const [hasMore, setHasMore]       = useState(false);
   const [totalPages, setTotalPages] = useState(1);
 
-  // Load genres on mount
+  // Load genres on mount or when language changes
   useEffect(() => {
     getGenres().then((r) => {
       setGenres(r.data.genres);
-      // Auto-select first genre
+      // Auto-select first genre if none active, or refreshing after lang change
       if (r.data.genres.length > 0) {
-        handleGenreSelect(r.data.genres[0]);
+        const matching = r.data.genres.find(g => g.id === activeGenre?.id) || r.data.genres[0];
+        handleGenreSelect(matching);
       }
     });
-  }, []); // eslint-disable-line
+  }, [i18n.language]); // eslint-disable-line
 
   const handleGenreSelect = async (genre) => {
     setActiveGenre(genre);
@@ -66,8 +69,8 @@ function GenresPage() {
     >
       {/* Header */}
       <div className="genres-page__header container">
-        <h1>Browse by Genre</h1>
-        <p>Discover movies from your favorite categories</p>
+        <h1>{t('details.browseByGenre')}</h1>
+        <p>{t('details.discoverMovies')}</p>
       </div>
 
       {/* Genre pills */}
@@ -110,7 +113,7 @@ function GenresPage() {
         {hasMore && !loading && (
           <div className="genres-page__load-more">
             <button className="btn-primary" onClick={loadMore}>
-              Load More
+              {t('details.loadMore')}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12 5v14M5 12l7 7 7-7" />
               </svg>

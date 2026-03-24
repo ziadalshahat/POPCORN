@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './Footer.css';
 
 function Footer() {
+  const { t } = useTranslation();
+
   return (
     <footer className="footer">
       <div className="footer__inner container">
@@ -10,7 +13,7 @@ function Footer() {
           <Link to="/" className="footer__logo">
             POP<span>CORN</span>
           </Link>
-          <p className="footer__tagline">Your premium movie streaming experience</p>
+          <p className="footer__tagline">{t('footer.tagline')}</p>
           <div className="footer__social">
             {/* Facebook */}
             <a href="https://www.facebook.com/ziadmahmoud.mohammed" target="_blank" rel="noreferrer" aria-label="Facebook">
@@ -35,36 +38,36 @@ function Footer() {
 
         {/* Links */}
         <div className="footer__links">
-          <h4>Navigate</h4>
+          <h4>{t('footer.navigate')}</h4>
           <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/genres">Browse</Link></li>
-            <li><Link to="/search">Search</Link></li>
-            <li><Link to="/watchlist">Watchlist</Link></li>
+            <li><Link to="/">{t('nav.home')}</Link></li>
+            <li><Link to="/movies">{t('nav.movies')}</Link></li>
+            <li><Link to="/tv">{t('nav.tvShows')}</Link></li>
+            <li><Link to="/watchlist">{t('nav.watchlist')}</Link></li>
           </ul>
         </div>
 
         <div className="footer__links">
-          <h4>Account</h4>
+          <h4>{t('footer.account')}</h4>
           <ul>
-            <li><Link to="/auth">Sign In</Link></li>
-            <li><Link to="/auth">Sign Up</Link></li>
-            <li><Link to="/watchlist">My List</Link></li>
+            <li><Link to="/auth">{t('auth.signIn')}</Link></li>
+            <li><Link to="/auth">{t('auth.signUp')}</Link></li>
+            <li><Link to="/watchlist">{t('footer.myList')}</Link></li>
           </ul>
         </div>
 
         <div className="footer__links">
-          <h4>About</h4>
+          <h4>{t('footer.about')}</h4>
           <ul>
-            <li><a href="https://developer.themoviedb.org" target="_blank" rel="noreferrer">Powered by TMDB</a></li>
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Terms of Service</a></li>
+            <li><a href="https://developer.themoviedb.org" target="_blank" rel="noreferrer">{t('footer.poweredBy')}</a></li>
+            <li><a href="#">{t('footer.privacy')}</a></li>
+            <li><a href="#">{t('footer.terms')}</a></li>
           </ul>
         </div>
       </div>
 
       <div className="footer__bottom container">
-        <p>© 2024–2025 SIA <strong>POPCORN</strong> Stream. All rights reserved.</p>
+        <p>© 2024–2025 SIA <strong>POPCORN</strong> Stream. {t('footer.rights')}</p>
       </div>
     </footer>
   );

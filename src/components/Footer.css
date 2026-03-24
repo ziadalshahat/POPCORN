@@ -68,6 +68,8 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding: 0;
+  margin: 0;
 }
 
 .footer__links ul li a {

@@ -72,6 +72,55 @@
 
 .search-page__count strong { color: #fff; }
 
+/* Filter tabs */
+.search-page__tabs {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.search-page__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.search-page__tab:hover {
+  border-color: var(--primary);
+  color: var(--text-primary);
+}
+
+.search-page__tab.active {
+  border-color: var(--primary);
+  background: rgba(229,9,20,0.12);
+  color: var(--primary);
+}
+
+.search-page__tab-count {
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  padding: 1px 7px;
+  border-radius: 100px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.search-page__tab.active .search-page__tab-count {
+  background: rgba(229,9,20,0.2);
+  color: var(--primary);
+}
+
 .search-page__results { padding-top: 32px; padding-bottom: 60px; }
 
 .search-page__grid {

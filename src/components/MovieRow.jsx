@@ -1,21 +1,27 @@
 import { useRef } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import MovieCard from './MovieCard';
 import SkeletonLoader from './SkeletonLoader';
 import './MovieRow.css';
 
 /**
- * MovieRow — Horizontal scrollable row of movie cards.
- * Netflix-style with left/right scroll arrows.
+ * MovieRow — Horizontal scrollable row of movie/TV cards.
  */
-function MovieRow({ title, movies = [], loading = false, cardCount = 8 }) {
+function MovieRow({ title, movies = [], loading = false, mediaType = 'movie', cardCount = 8 }) {
+  const { t } = useTranslation();
   const rowRef = useRef(null);
 
-  const scroll = (dir) => {
+  const scroll = (direction) => {
     const el = rowRef.current;
     if (!el) return;
     const amount = el.offsetWidth * 0.75;
-    el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
+    const isRTL = document.dir === 'rtl';
+
+    const sign = direction === 'prev' ? -1 : 1;
+    const scrollVal = isRTL ? -sign * amount : sign * amount;
+
+    el.scrollBy({ left: scrollVal, behavior: 'smooth' });
   };
 
   return (
@@ -25,9 +31,9 @@ function MovieRow({ title, movies = [], loading = false, cardCount = 8 }) {
       <div className="movie-row__wrapper">
         {/* Left arrow */}
         <button
-          className="movie-row__arrow movie-row__arrow--left"
-          onClick={() => scroll('left')}
-          aria-label="Scroll left"
+          className="movie-row__arrow movie-row__arrow--prev"
+          onClick={() => scroll('prev')}
+          aria-label={t('common.scrollLeft')}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M15 18l-6-6 6-6" />
@@ -40,15 +46,15 @@ function MovieRow({ title, movies = [], loading = false, cardCount = 8 }) {
             ? Array.from({ length: cardCount }).map((_, i) => (
                 <SkeletonLoader key={i} type="card" />
               ))
-            : movies.slice(0, cardCount).map((movie, i) => (
+            : movies.slice(0, cardCount).map((item, i) => (
                 <motion.div
-                  key={movie.id}
+                  key={item.id}
                   className="movie-row__item"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.04, duration: 0.35 }}
                 >
-                  <MovieCard movie={movie} />
+                  <MovieCard item={item} mediaType={mediaType} />
                 </motion.div>
               ))
           }
@@ -56,9 +62,9 @@ function MovieRow({ title, movies = [], loading = false, cardCount = 8 }) {
 
         {/* Right arrow */}
         <button
-          className="movie-row__arrow movie-row__arrow--right"
-          onClick={() => scroll('right')}
-          aria-label="Scroll right"
+          className="movie-row__arrow movie-row__arrow--next"
+          onClick={() => scroll('next')}
+          aria-label={t('common.scrollRight')}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M9 18l6-6-6-6" />

@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useWatchlist } from '../context/WatchlistContext';
-import useSearch from '../hooks/useSearch';
+import { searchMulti } from '../api/tmdb';
+import LanguageSwitcher from './LanguageSwitcher';
 import './Navbar.css';
 
 function Navbar() {
@@ -11,13 +13,17 @@ function Navbar() {
   const [searchOpen, setSearchOpen]   = useState(false);
   const [menuOpen, setMenuOpen]       = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [query, setQuery]             = useState('');
+  const [results, setResults]         = useState([]);
+  const [liveLoading, setLiveLoading] = useState(false);
   const searchInputRef                = useRef(null);
   const profileRef                    = useRef(null);
+  const debounceRef                   = useRef(null);
   const navigate                      = useNavigate();
   const location                      = useLocation();
   const { user, logout }              = useAuth();
   const { watchlist }                 = useWatchlist();
-  const { query, setQuery, results, loading, clearSearch } = useSearch();
+  const { t }                         = useTranslation();
 
   // Darken navbar on scroll
   useEffect(() => {
@@ -47,6 +53,29 @@ function Navbar() {
   // Close mobile menu on route change
   useEffect(() => { setMenuOpen(false); }, [location]);
 
+  // Debounced live search (movies + TV via searchMulti)
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!query.trim()) { setResults([]); setLiveLoading(false); return; }
+    setLiveLoading(true);
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await searchMulti(query);
+        const filtered = (res.data.results || [])
+          .filter((r) => r.media_type === 'movie' || r.media_type === 'tv')
+          .slice(0, 6);
+        setResults(filtered);
+      } catch {
+        setResults([]);
+      } finally {
+        setLiveLoading(false);
+      }
+    }, 400);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [query]);
+
+  const clearSearch = () => { setQuery(''); setResults([]); };
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (query.trim()) {
@@ -56,10 +85,23 @@ function Navbar() {
     }
   };
 
-  const handleResultClick = (id) => {
-    navigate(`/movie/${id}`);
+  const handleResultClick = (item) => {
+    const path = item.media_type === 'tv' ? `/tv/${item.id}` : `/movie/${item.id}`;
+    navigate(path);
     setSearchOpen(false);
     clearSearch();
+  };
+
+  const navLinks = [
+    { to: '/',           label: t('nav.home') },
+    { to: '/movies',     label: t('nav.movies') },
+    { to: '/tv',         label: t('nav.tvShows') },
+    { to: '/watchlist',  label: t('nav.watchlist') },
+  ];
+
+  const isActive = (to) => {
+    if (to === '/') return location.pathname === '/';
+    return location.pathname.startsWith(to);
   };
 
   return (
@@ -71,9 +113,11 @@ function Navbar() {
 
       {/* Desktop nav links */}
       <nav className={`navbar__links ${menuOpen ? 'navbar__links--open' : ''}`}>
-        <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Home</Link>
-        <Link to="/genres" className={location.pathname === '/genres' ? 'active' : ''}>Browse</Link>
-        <Link to="/search" className={location.pathname === '/search' ? 'active' : ''}>Movies</Link>
+        {navLinks.map(({ to, label }) => (
+          <Link key={to} to={to} className={isActive(to) ? 'active' : ''}>
+            {label}
+          </Link>
+        ))}
       </nav>
 
       {/* Right side actions */}
@@ -90,7 +134,7 @@ function Navbar() {
         </button>
 
         {/* Watchlist */}
-        <Link to="/watchlist" className="navbar__icon-btn navbar__watchlist-btn" aria-label="Watchlist">
+        <Link to="/watchlist" className="navbar__icon-btn navbar__watchlist-btn" aria-label={t('nav.watchlist')}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
           </svg>
@@ -98,6 +142,9 @@ function Navbar() {
             <span className="navbar__badge">{watchlist.length}</span>
           )}
         </Link>
+        
+        {/* Language Switcher */}
+        <LanguageSwitcher />
 
         {/* Auth */}
         {user ? (
@@ -127,17 +174,17 @@ function Navbar() {
                   </div>
                   <hr />
                   <Link to="/watchlist" onClick={() => setProfileOpen(false)}>
-                    My Watchlist
+                    {t('nav.watchlist')}
                   </Link>
                   <button className="logout" onClick={() => { logout(); setProfileOpen(false); }}>
-                    Sign Out
+                    {t('nav.signOut')}
                   </button>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
         ) : (
-          <Link to="/auth" className="navbar__signin-btn">Sign In</Link>
+          <Link to="/auth" className="navbar__signin-btn">{t('nav.signIn')}</Link>
         )}
 
         {/* Mobile hamburger */}
@@ -167,7 +214,7 @@ function Navbar() {
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder="Search movies, genres, actors..."
+                placeholder={t('nav.searchPlaceholder')}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />
@@ -177,48 +224,58 @@ function Navbar() {
                 </button>
               )}
               <button type="button" className="navbar__search-close" onClick={() => setSearchOpen(false)}>
-                Close
+                {t('common.close')}
               </button>
             </form>
 
             {/* Live results dropdown */}
             {query.trim() && (
               <div className="navbar__search-results">
-                {loading && (
+                {liveLoading && (
                   <div className="navbar__search-loading">
                     <div className="spinner" />
-                    <span>Searching...</span>
+                    <span>{t('details.searching')}</span>
                   </div>
                 )}
-                {!loading && results.length === 0 && (
-                  <p className="navbar__search-empty">No results for &ldquo;{query}&rdquo;</p>
+                {!liveLoading && results.length === 0 && (
+                  <p className="navbar__search-empty">{t('details.noResultsFor', { query })}</p>
                 )}
-                {results.slice(0, 6).map((movie) => (
-                  <button
-                    key={movie.id}
-                    className="navbar__search-item"
-                    onClick={() => handleResultClick(movie.id)}
-                  >
-                    {movie.poster_path ? (
-                      <img
-                        src={`https://image.tmdb.org/t/p/w92${movie.poster_path}`}
-                        alt={movie.title}
-                      />
-                    ) : (
-                      <div className="navbar__search-item-placeholder" />
-                    )}
-                    <div>
-                      <p className="title">{movie.title}</p>
-                      <p className="year">{movie.release_date?.slice(0, 4)} · ⭐ {movie.vote_average?.toFixed(1)}</p>
-                    </div>
-                  </button>
-                ))}
-                {results.length > 6 && (
+                {results.map((item) => {
+                  const isTV  = item.media_type === 'tv';
+                  const title = item.title || item.name;
+                  const year  = (item.release_date || item.first_air_date)?.slice(0, 4);
+                  return (
+                    <button
+                      key={`${item.media_type}-${item.id}`}
+                      className="navbar__search-item"
+                      onClick={() => handleResultClick(item)}
+                    >
+                      {item.poster_path ? (
+                        <img
+                          src={`https://image.tmdb.org/t/p/w92${item.poster_path}`}
+                          alt={title}
+                        />
+                      ) : (
+                        <div className="navbar__search-item-placeholder" />
+                      )}
+                      <div>
+                        <p className="title">
+                          {title}
+                          {isTV && <span className="navbar__search-tv-badge">{t('common.tvLabel')}</span>}
+                        </p>
+                        <p className="year">
+                          {year} · ⭐ {item.vote_average?.toFixed(1)}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
+                {query.trim() && (
                   <button
                     className="navbar__search-more"
                     onClick={handleSearchSubmit}
                   >
-                    See all {results.length} results →
+                    {t('details.seeAllResults', { query })}
                   </button>
                 )}
               </div>

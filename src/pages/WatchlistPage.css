@@ -19,7 +19,57 @@
 
 .watchlist-page__header p { color: var(--text-muted); font-size: 0.9rem; }
 
+/* Tabs */
+.watchlist-page__tabs {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.watchlist-page__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.watchlist-page__tab:hover {
+  border-color: var(--primary);
+  color: var(--text-primary);
+}
+
+.watchlist-page__tab.active {
+  border-color: var(--primary);
+  background: rgba(229,9,20,0.12);
+  color: var(--primary);
+}
+
+.watchlist-page__tab-count {
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  padding: 1px 7px;
+  border-radius: 100px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.watchlist-page__tab.active .watchlist-page__tab-count {
+  background: rgba(229,9,20,0.2);
+  color: var(--primary);
+}
+
 .watchlist-page__content { padding-bottom: 60px; }
+
 
 /* Grid of cards */
 .watchlist-page__grid {
@@ -88,10 +138,23 @@
 
 .watchlist-card__meta {
   display: flex;
+  align-items: center;
   gap: 12px;
   color: var(--text-muted);
   font-size: 0.8rem;
 }
+
+.watchlist-card__tv-tag {
+  background: var(--primary);
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
 
 .watchlist-card__overview {
   color: var(--text-secondary);

@@ -59,8 +59,12 @@
   box-shadow: var(--shadow-glow);
 }
 
-.movie-row__arrow--left  { left: max(2px, calc(var(--container-pad) - 20px)); }
-.movie-row__arrow--right { right: max(2px, calc(var(--container-pad) - 20px)); }
+.movie-row__arrow--prev  { inset-inline-start: max(2px, calc(var(--container-pad) - 20px)); }
+.movie-row__arrow--next  { inset-inline-end: max(2px, calc(var(--container-pad) - 20px)); }
+
+[dir="rtl"] .movie-row__arrow svg {
+  transform: scaleX(-1);
+}
 
 /* Responsive */
 @media (max-width: 768px) {

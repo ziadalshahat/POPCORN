@@ -366,6 +366,19 @@
 .navbar__search-item .title {
   font-size: 0.9rem;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navbar__search-tv-badge {
+  background: var(--primary);
+  color: #fff;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 .navbar__search-item .year {
@@ -408,7 +421,8 @@
     top: var(--nav-height);
     left: 0;
     right: 0;
-    bottom: 0;
+    height: calc(100vh - var(--nav-height));
+    overflow-y: auto;
     background: rgba(8,8,8,0.98);
     flex-direction: column;
     justify-content: center;
@@ -420,12 +434,57 @@
 
   .navbar__links--open { transform: translateX(0); }
 
+  [dir="rtl"] .navbar__links { transform: translateX(100%); }
+  [dir="rtl"] .navbar__links--open { transform: translateX(0); }
+
   .navbar__links a {
     font-size: 1.5rem;
     font-weight: 700;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+  }
+
+  .navbar__links a::after {
+    display: none;
   }
 
   .navbar__hamburger { display: flex; }
 
   .navbar__signin-btn { padding: 7px 14px; font-size: 0.8rem; }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    gap: 8px;
+    padding: 0 12px;
+  }
+
+  .navbar__logo {
+    font-size: 1.1rem;
+  }
+
+  .navbar__actions {
+    gap: 4px;
+  }
+
+  .navbar__icon-btn {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .navbar__icon-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .navbar__signin-btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+
+  .navbar__avatar {
+    width: 30px;
+    height: 30px;
+  }
 }

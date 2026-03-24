@@ -33,6 +33,36 @@ function SkeletonLoader({ type = 'card', count = 1 }) {
     );
   }
 
+  if (type === 'actor-detail') {
+    return (
+      <div className="skeleton-actor-detail">
+        <div className="skeleton-actor-detail__header shimmer" />
+        <div className="skeleton-actor-detail__body">
+          <div className="skeleton-actor-detail__sidebar">
+            <div className="skeleton-actor-detail__image shimmer" />
+            <div className="skeleton-actor-detail__info shimmer" />
+          </div>
+          <div className="skeleton-actor-detail__main">
+            <div className="skeleton-text shimmer" style={{ width: '40%', height: 48, marginBottom: 24 }} />
+            <div className="skeleton-text shimmer" style={{ width: '20%', height: 24, marginBottom: 12 }} />
+            <div className="skeleton-text shimmer" style={{ width: '100%', height: 14 }} />
+            <div className="skeleton-text shimmer" style={{ width: '95%', height: 14 }} />
+            <div className="skeleton-text shimmer" style={{ width: '90%', height: 14 }} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (type === 'person') {
+    return (
+      <div className="skeleton-person">
+        <div className="skeleton-person__image shimmer" />
+        <div className="skeleton-person__name shimmer" />
+      </div>
+    );
+  }
+
   if (type === 'text') {
     return (
       <div className="skeleton-text-block">

@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import './AuthPage.css';
 
 function AuthPage() {
+  const { t } = useTranslation();
   const [tab, setTab]             = useState('login'); // 'login' | 'signup'
   const [email, setEmail]         = useState('');
   const [password, setPassword]   = useState('');
@@ -49,7 +51,7 @@ function AuthPage() {
         <div className="auth-page__logo">
           POP<span>CORN</span>
         </div>
-        <p className="auth-page__subtitle">Your premium streaming experience</p>
+        <p className="auth-page__subtitle">{t('auth.premiumExperience')}</p>
 
         {/* Tabs */}
         <div className="auth-page__tabs">
@@ -57,13 +59,13 @@ function AuthPage() {
             className={`auth-tab ${tab === 'login' ? 'active' : ''}`}
             onClick={() => setTab('login')}
           >
-            Sign In
+            {t('auth.signIn')}
           </button>
           <button
             className={`auth-tab ${tab === 'signup' ? 'active' : ''}`}
             onClick={() => setTab('signup')}
           >
-            Sign Up
+            {t('auth.signUp')}
           </button>
         </div>
 
@@ -76,8 +78,8 @@ function AuthPage() {
               animate={{ opacity: 1, scale: 1 }}
             >
               <div className="auth-success-icon">✓</div>
-              <h3>Welcome{name ? `, ${name}` : ''}!</h3>
-              <p>Redirecting to home...</p>
+              <h3>{t('auth.welcome')}{name ? `, ${name}` : ''}!</h3>
+              <p>{t('auth.redirecting')}</p>
             </motion.div>
           ) : (
             <motion.form
@@ -91,7 +93,7 @@ function AuthPage() {
             >
               {tab === 'signup' && (
                 <div className="auth-field">
-                  <label>Full Name</label>
+                  <label>{t('auth.fullName')}</label>
                   <input
                     type="text"
                     placeholder="John Doe"
@@ -103,7 +105,7 @@ function AuthPage() {
               )}
 
               <div className="auth-field">
-                <label>Email</label>
+                <label>{t('auth.email')}</label>
                 <input
                   type="email"
                   placeholder="you@example.com"
@@ -114,11 +116,11 @@ function AuthPage() {
               </div>
 
               <div className="auth-field">
-                <label>Password</label>
+                <label>{t('auth.password')}</label>
                 <div className="auth-field__password">
                   <input
                     type={showPass ? 'text' : 'password'}
-                    placeholder={tab === 'signup' ? 'Min. 6 characters' : 'Enter password'}
+                    placeholder={tab === 'signup' ? t('auth.minCharacters') : t('auth.enterPassword')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -151,16 +153,16 @@ function AuthPage() {
               >
                 {loading ? (
                   <span className="spinner" />
-                ) : tab === 'login' ? 'Sign In' : 'Create Account'}
+                ) : tab === 'login' ? t('auth.signIn') : t('auth.createAccount')}
               </button>
 
               <p className="auth-switch">
-                {tab === 'login' ? "Don't have an account? " : 'Already have an account? '}
+                {tab === 'login' ? t('auth.dontHaveAccount') + ' ' : t('auth.alreadyHaveAccount') + ' '}
                 <button
                   type="button"
                   onClick={() => setTab(tab === 'login' ? 'signup' : 'login')}
                 >
-                  {tab === 'login' ? 'Sign up' : 'Sign in'}
+                  {tab === 'login' ? t('auth.signUp') : t('auth.signIn')}
                 </button>
               </p>
             </motion.form>
