@@ -38,6 +38,11 @@ const UserSchema = new mongoose.Schema(
         first_air_date: String,
       },
     ],
+    role: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'user',
+    },
   },
   {
     timestamps: true,

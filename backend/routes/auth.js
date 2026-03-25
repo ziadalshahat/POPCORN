@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const LoginHistory = require('../models/LoginHistory');
 const protect = require('../middleware/authMiddleware');
 const router = express.Router();
 
@@ -18,10 +19,16 @@ router.post('/', async (req, res) => {
       user = await User.create({ name, email, password });
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
+      await LoginHistory.create({
+        userId: user._id,
+        ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.ip,
+        userAgent: req.headers['user-agent'] || 'Unknown'
+      });
+
       return res.status(201).json({
         success: true,
         token,
-        user: { id: user._id, name: user.name, email: user.email, avatar: user.avatar },
+        user: { id: user._id, name: user.name, email: user.email, avatar: user.avatar, role: user.role || 'user' },
       });
     }
 
@@ -34,10 +41,16 @@ router.post('/', async (req, res) => {
 
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
+      await LoginHistory.create({
+        userId: user._id,
+        ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.ip,
+        userAgent: req.headers['user-agent'] || 'Unknown'
+      });
+
       return res.status(200).json({
         success: true,
         token,
-        user: { id: user._id, name: user.name, email: user.email, avatar: user.avatar },
+        user: { id: user._id, name: user.name, email: user.email, avatar: user.avatar, role: user.role || 'user' },
       });
     }
 

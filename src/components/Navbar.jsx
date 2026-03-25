@@ -176,6 +176,11 @@ function Navbar() {
                     </div>
                   </div>
                   <hr />
+                  {user.role === 'admin' && (
+                    <Link to="/admin" onClick={() => setProfileOpen(false)}>
+                      Admin Dashboard
+                    </Link>
+                  )}
                   <Link to="/profile" onClick={() => setProfileOpen(false)}>
                     {t('nav.profile', 'My Profile')}
                   </Link>

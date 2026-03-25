@@ -12,6 +12,13 @@ import WatchlistPage from './pages/WatchlistPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ActorDetailPage from './pages/ActorDetailPage';
 import ProfilePage from './pages/ProfilePage';
+
+// Admin imports
+import AdminRoute from './components/admin/AdminRoute';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminLogins from './pages/admin/AdminLogins';
+
 import { AuthProvider } from './context/AuthContext';
 import { WatchlistProvider } from './context/WatchlistContext';
 import { Analytics } from "@vercel/analytics/react";
@@ -35,6 +42,12 @@ function App() {
             <Route path="/auth"       element={<AuthPage />} />
             <Route path="/watchlist"  element={<WatchlistPage />} />
             <Route path="/profile"   element={<ProfilePage />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+            <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
+            <Route path="/admin/logins" element={<AdminRoute><AdminLogins /></AdminRoute>} />
+
             <Route path="*"           element={<NotFoundPage />} />
           </Routes>
           <Footer />
