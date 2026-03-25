@@ -1,5 +1,6 @@
 import connectDB from '../utils/db.js';
 import User from '../models/User.js';
+import LoginHistory from '../models/LoginHistory.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
@@ -29,6 +30,13 @@ async function handler(req, res) {
         const user = await User.create({ name, email, password });
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
         
+        // Record Login
+        await LoginHistory.create({
+          userId: user._id,
+          ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+          userAgent: req.headers['user-agent']
+        });
+        
         return res.status(201).json({ success: true, token, user });
       }
 
@@ -40,6 +48,14 @@ async function handler(req, res) {
         if (!isMatch) return res.status(401).json({ success: false, message: 'Invalid credentials' });
         
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+
+        // Record Login
+        await LoginHistory.create({
+          userId: user._id,
+          ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+          userAgent: req.headers['user-agent']
+        });
+
         return res.status(200).json({ success: true, token, user });
       }
 

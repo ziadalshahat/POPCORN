@@ -16,7 +16,12 @@ const UserSchema = new mongoose.Schema(
       vote_average: Number,
       release_date: String,
       first_air_date: String,
-    }]
+    }],
+    role: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'user',
+    },
   },
   { timestamps: true }
 );
