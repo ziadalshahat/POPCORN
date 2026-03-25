@@ -32,9 +32,9 @@ const upload = multer({
 });
 
 // @desc    Update user profile (name, avatar URL)
-// @route   PUT /api/user/profile
+// @route   PUT /api/user
 // @access  Private
-router.put('/profile', protect, async (req, res) => {
+router.put('/', protect, async (req, res) => {
   const { name, avatar } = req.body;
 
   try {
@@ -58,9 +58,9 @@ router.put('/profile', protect, async (req, res) => {
 });
 
 // @desc    Upload avatar image
-// @route   POST /api/user/avatar
+// @route   POST /api/user
 // @access  Private
-router.post('/avatar', protect, upload.single('avatar'), async (req, res) => {
+router.post('/', protect, upload.single('avatar'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });

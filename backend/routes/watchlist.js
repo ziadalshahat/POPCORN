@@ -40,10 +40,10 @@ router.post('/', protect, async (req, res) => {
 });
 
 // @desc    Remove item from watchlist
-// @route   DELETE /api/watchlist/:itemId
+// @route   DELETE /api/watchlist?id=
 // @access  Private
-router.delete('/:itemId', protect, async (req, res) => {
-  const itemId = parseInt(req.params.itemId);
+router.delete('/', protect, async (req, res) => {
+  const itemId = parseInt(req.query.id);
 
   try {
     const user = await User.findById(req.user._id);

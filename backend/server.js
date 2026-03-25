@@ -13,7 +13,15 @@ const app = express();
 const path = require('path');
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://192.168.1.5:5173", // Example local network
+    process.env.VITE_FRONTEND_URL || "https://popcorn-stream.vercel.app"
+  ],
+  credentials: true
+}));
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
