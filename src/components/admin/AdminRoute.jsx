@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import NotFoundPage from '../../pages/NotFoundPage';
 
 const AdminRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -12,9 +13,9 @@ const AdminRoute = ({ children }) => {
     );
   }
 
-  // If user is null or doesn't have the admin role
+  // If user is null or doesn't have the admin role, show the 404 page
   if (!user || user.role !== 'admin') {
-    return <Navigate to="/" replace />;
+    return <NotFoundPage />;
   }
 
   return children;
