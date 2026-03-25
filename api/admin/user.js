@@ -1,6 +1,5 @@
-import connectDB from '../utils/db.js';
-import User from '../models/User.js';
-import LoginHistory from '../models/LoginHistory.js';
+import connectDB from '../../utils/db.js';
+import User from '../../models/User.js';
 import jwt from 'jsonwebtoken';
 
 const allowCors = (fn) => async (req, res) => {
@@ -30,37 +29,9 @@ async function handler(req, res) {
       return res.status(403).json({ message: 'Access denied: Admin only' });
     }
 
-    const { url, method } = req;
-    const path = url.split('?')[0];
-
-    // GET Requests
-    if (method === 'GET') {
-      if (path.includes('/stats')) {
-        const totalUsers = await User.countDocuments();
-        const totalLogins = await LoginHistory.countDocuments();
-        const active24h = await LoginHistory.countDocuments({
-          createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
-        });
-        return res.json({ totalUsers, totalLogins, activeUsers: active24h });
-      }
-
-      if (path.includes('/users')) {
-        const users = await User.find().sort({ createdAt: -1 });
-        return res.json(users);
-      }
-
-      if (path.includes('/logins')) {
-        const logins = await LoginHistory.find()
-          .populate('userId', 'name email avatar')
-          .sort({ createdAt: -1 })
-          .limit(100);
-        return res.json(logins);
-      }
-    }
-
-    // DELETE /api/admin/user/:id
-    if (method === 'DELETE' && path.includes('/user/')) {
-      const userId = path.split('/user/')[1];
+    // DELETE /api/admin/user?id=...
+    if (req.method === 'DELETE') {
+      const userId = req.query.id;
       if (!userId) return res.status(400).json({ message: 'User ID required' });
 
       const userToDelete = await User.findById(userId);

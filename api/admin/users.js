@@ -1,0 +1,43 @@
+import connectDB from '../../utils/db.js';
+import User from '../../models/User.js';
+import jwt from 'jsonwebtoken';
+
+const allowCors = (fn) => async (req, res) => {
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
+  );
+  if (req.method === 'OPTIONS') { res.status(200).end(); return; }
+  return await fn(req, res);
+};
+
+async function handler(req, res) {
+  try {
+    await connectDB();
+
+    // Verify Admin JWT
+    let token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Not authorized' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const adminUser = await User.findById(decoded.id);
+    
+    if (!adminUser || adminUser.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied: Admin only' });
+    }
+
+    if (req.method === 'GET') {
+      const users = await User.find().sort({ createdAt: -1 });
+      return res.json(users);
+    }
+
+    res.status(405).json({ message: 'Method Not Allowed' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+export default allowCors(handler);
