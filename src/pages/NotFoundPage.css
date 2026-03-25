@@ -1,141 +1,125 @@
-.not-found-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--bg);
-  color: var(--text-h);
+.cinematic-404 {
   position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000;
   overflow: hidden;
-  padding: 2rem;
-  box-sizing: border-box;
-}
-
-.not-found-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at center, rgba(192, 132, 252, 0.1) 0%, var(--bg) 70%);
-  z-index: 0;
-}
-
-.not-found-content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  max-width: 800px;
-}
-
-.not-found-title-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.glitch-text {
-  font-family: var(--heading);
-  font-size: 8rem;
-  font-weight: 800;
-  line-height: 1;
-  margin: 0;
-  background: linear-gradient(to right, #ff3b3b, var(--accent), #fff);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 20px rgba(192, 132, 252, 0.4));
-  letter-spacing: -4px;
-}
-
-.not-found-subtitle {
-  font-size: 1.5rem;
-  color: var(--text-h);
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-.not-found-description {
-  font-size: 1.1rem;
-  color: var(--text);
-  max-width: 400px;
-}
-
-.battle-container {
-  width: 100%;
-  max-width: 600px;
-  height: 350px;
-  position: relative;
-  margin: 2rem 0;
-  perspective: 1000px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.clash-effect {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80%;
-  height: 80%;
-  background: radial-gradient(circle, rgba(255, 59, 59, 0.4) 0%, transparent 70%);
-  border-radius: 50%;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.battle-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 0 30px rgba(255, 59, 59, 0.3));
-  z-index: 1;
-  position: relative;
-  border-radius: 20px;
-}
-
-.home-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  text-decoration: none;
-  color: var(--bg);
-  background: var(--text-h);
-  border-radius: 50px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-  margin-top: 1rem;
-}
-
-.home-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 30px rgba(192, 132, 252, 0.4);
-  background: var(--accent);
   color: #fff;
 }
 
-@media (max-width: 768px) {
-  .glitch-text {
-    font-size: 5rem;
+.cinematic-404__bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.4) saturate(1.2);
+  z-index: 1;
+}
+
+.cinematic-404__overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%);
+  z-index: 2;
+}
+
+.cinematic-404__content {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  padding: 2rem;
+  max-width: 600px;
+}
+
+.cinematic-404__code {
+  font-size: clamp(8rem, 15vw, 12rem);
+  font-weight: 900;
+  margin: 0;
+  line-height: 1;
+  font-family: 'Inter', sans-serif;
+  color: #fff;
+  letter-spacing: -5px;
+}
+
+.cinematic-404__text-box {
+  margin-top: -1rem;
+  margin-bottom: 3rem;
+}
+
+.cinematic-404__title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--primary-color, #e50914);
+  letter-spacing: 4px;
+  margin-bottom: 1rem;
+}
+
+.cinematic-404__desc {
+  font-size: 1.1rem;
+  color: #ccc;
+  line-height: 1.6;
+}
+
+.cinematic-404__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 36px;
+  background-color: var(--primary-color, #e50914);
+  color: #fff !important;
+  text-decoration: none !important;
+  font-weight: 700;
+  border-radius: 100px;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 20px rgba(229, 9, 20, 0.3);
+}
+
+.cinematic-404__btn:hover {
+  transform: scale(1.05) translateY(-3px);
+  background-color: #ff0f1a;
+  box-shadow: 0 15px 30px rgba(229, 9, 20, 0.5);
+  color: #fff !important;
+}
+
+.cinematic-404__btn svg {
+  transition: transform 0.3s ease;
+}
+
+.cinematic-404__btn:hover svg {
+  transform: rotate(-10deg);
+}
+
+/* Film Grain Effect */
+.film-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background-image: url("https://www.transparenttextures.com/patterns/pinstriped-suit.png");
+  opacity: 0.05;
+  animation: grain 1s steps(10) infinite;
+}
+
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -5%); }
+  30% { transform: translate(5%, 5%); }
+  50% { transform: translate(-10%, 10%); }
+  70% { transform: translate(10%, -10%); }
+}
+
+@media (max-width: 480px) {
+  .cinematic-404__code {
+    font-size: 6rem;
   }
-  .battle-container {
-    height: 250px;
+  .cinematic-404__title {
+    font-size: 1.5rem;
   }
-  .not-found-subtitle {
-    font-size: 1.2rem;
+  .cinematic-404__desc {
+    font-size: 0.95rem;
   }
 }
