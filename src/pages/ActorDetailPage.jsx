@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { getPersonDetails, getPersonCredits, buildImageUrl, POSTER_SIZE, normaliseItem } from '../api/tmdb';
 import MovieRow from '../components/MovieRow';
 import SkeletonLoader from '../components/SkeletonLoader';
+import NotFoundPage from './NotFoundPage';
 import './ActorDetailPage.css';
 
 function ActorDetailPage() {
@@ -39,12 +40,18 @@ function ActorDetailPage() {
         setLoading(false);
       })
       .catch((err) => {
-        setError(err.message);
+        if (err.response?.status === 404) {
+          setError('404');
+        } else {
+          setError(err.message);
+        }
         setLoading(false);
       });
   }, [id, t]);
 
   if (loading) return <div className="page-wrapper"><SkeletonLoader type="actor-detail" /></div>;
+
+  if (error === '404') return <NotFoundPage />;
 
   if (error || !actor) {
     return (

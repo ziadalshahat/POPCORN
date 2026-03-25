@@ -11,6 +11,7 @@ import MovieRow from '../components/MovieRow';
 import EpisodeCard from '../components/EpisodeCard';
 import SkeletonLoader from '../components/SkeletonLoader';
 import ActorCard from '../components/ActorCard';
+import NotFoundPage from './NotFoundPage';
 import './TVDetailPage.css';
 
 /**
@@ -86,7 +87,11 @@ function TVDetailPage() {
         setLoading(false);
       })
       .catch((err) => {
-        setError(err.message);
+        if (err.response?.status === 404) {
+          setError('404');
+        } else {
+          setError(err.message);
+        }
         setLoading(false);
       });
   }, [id, t]);
@@ -106,6 +111,8 @@ function TVDetailPage() {
 
   // ── Loading / Error states ───────────────────────────────────
   if (loading) return <div className="page-wrapper"><SkeletonLoader type="detail" /></div>;
+
+  if (error === '404') return <NotFoundPage />;
 
   if (error || !show) {
     return (

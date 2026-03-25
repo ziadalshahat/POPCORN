@@ -7,6 +7,7 @@ import { useWatchlist } from '../context/WatchlistContext';
 import MovieRow from '../components/MovieRow';
 import SkeletonLoader from '../components/SkeletonLoader';
 import ActorCard from '../components/ActorCard';
+import NotFoundPage from './NotFoundPage';
 import './MovieDetailPage.css';
 
 function MovieDetailPage() {
@@ -67,12 +68,18 @@ function MovieDetailPage() {
         setLoading(false);
       })
       .catch((err) => {
-        setError(err.message);
+        if (err.response?.status === 404) {
+          setError('404');
+        } else {
+          setError(err.message);
+        }
         setLoading(false);
       });
   }, [id, t]);
 
   if (loading) return <div className="page-wrapper"><SkeletonLoader type="detail" /></div>;
+
+  if (error === '404') return <NotFoundPage />;
 
   if (error || !movie) {
     return (
