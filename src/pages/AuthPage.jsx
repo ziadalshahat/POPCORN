@@ -96,7 +96,7 @@ function AuthPage() {
                   <label>{t('auth.fullName')}</label>
                   <input
                     type="text"
-                    placeholder="John Doe"
+                    placeholder="Tony Stark"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
@@ -108,7 +108,7 @@ function AuthPage() {
                 <label>{t('auth.email')}</label>
                 <input
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="ironman@marvel.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required

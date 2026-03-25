@@ -1,89 +1,101 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { registerUser, loginUser, getMe } from '../api/auth';
 
 const AuthContext = createContext(null);
 
-const STORAGE_KEY = 'popcorn_auth_user';
+const TOKEN_KEY = 'popcorn_token';
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : null;
-    } catch {
-      return null;
-    }
-  });
-
-  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const errorTimerRef = useRef(null);
 
-  // Persist user to localStorage whenever it changes
+  // Auto-dismiss error after 5 seconds
   useEffect(() => {
-    if (user) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-    } else {
-      localStorage.removeItem(STORAGE_KEY);
+    if (error) {
+      if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
+      errorTimerRef.current = setTimeout(() => setError(null), 5000);
     }
-  }, [user]);
+    return () => {
+      if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
+    };
+  }, [error]);
+
+  const clearError = () => setError(null);
+
+  // On mount, check if we have a saved token and fetch user data
+  useEffect(() => {
+    const loadUser = async () => {
+      const token = localStorage.getItem(TOKEN_KEY);
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const res = await getMe();
+        setUser(res.data);
+      } catch {
+        // Token expired or invalid
+        localStorage.removeItem(TOKEN_KEY);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadUser();
+  }, []);
 
   /**
-   * Mock login — simulates an API call delay
+   * Login — calls POST /api/auth/login
    */
   const login = async (email, password) => {
     setLoading(true);
     setError(null);
     try {
-      await new Promise((r) => setTimeout(r, 800)); // simulate network
       if (!email || !password) throw new Error('Email and password required');
-      const mockUser = {
-        id: 1,
-        name: email.split('@')[0],
-        email,
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(email.split('@')[0])}&background=DB0000&color=fff&size=128`,
-      };
-      setUser(mockUser);
+      const res = await loginUser({ email, password });
+      localStorage.setItem(TOKEN_KEY, res.data.token);
+      setUser(res.data.user);
       return { success: true };
     } catch (err) {
-      setError(err.message);
-      return { success: false, error: err.message };
+      const message = err.response?.data?.message || err.message;
+      setError(message);
+      return { success: false, error: message };
     } finally {
       setLoading(false);
     }
   };
 
   /**
-   * Mock signup — simulates an API call delay
+   * Signup — calls POST /api/auth/register
    */
   const signup = async (name, email, password) => {
     setLoading(true);
     setError(null);
     try {
-      await new Promise((r) => setTimeout(r, 1000));
       if (!name || !email || !password) throw new Error('All fields required');
       if (password.length < 6) throw new Error('Password must be at least 6 characters');
-      const mockUser = {
-        id: Date.now(),
-        name,
-        email,
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=DB0000&color=fff&size=128`,
-      };
-      setUser(mockUser);
+      const res = await registerUser({ name, email, password });
+      localStorage.setItem(TOKEN_KEY, res.data.token);
+      setUser(res.data.user);
       return { success: true };
     } catch (err) {
-      setError(err.message);
-      return { success: false, error: err.message };
+      const message = err.response?.data?.message || err.message;
+      setError(message);
+      return { success: false, error: message };
     } finally {
       setLoading(false);
     }
   };
 
   const logout = () => {
+    localStorage.removeItem(TOKEN_KEY);
     setUser(null);
     setError(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, setUser, loading, error, login, signup, logout, clearError }}>
       {children}
     </AuthContext.Provider>
   );

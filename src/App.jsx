@@ -11,6 +11,7 @@ import AuthPage from './pages/AuthPage';
 import WatchlistPage from './pages/WatchlistPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ActorDetailPage from './pages/ActorDetailPage';
+import ProfilePage from './pages/ProfilePage';
 import { AuthProvider } from './context/AuthContext';
 import { WatchlistProvider } from './context/WatchlistContext';
 import { Analytics } from "@vercel/analytics/react";
@@ -33,6 +34,7 @@ function App() {
             <Route path="/genres"     element={<GenresPage />} />
             <Route path="/auth"       element={<AuthPage />} />
             <Route path="/watchlist"  element={<WatchlistPage />} />
+            <Route path="/profile"   element={<ProfilePage />} />
             <Route path="*"           element={<NotFoundPage />} />
           </Routes>
           <Footer />

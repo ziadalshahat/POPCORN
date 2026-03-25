@@ -7,7 +7,8 @@
     "watchlist": "Watchlist",
     "searchPlaceholder": "Search movies, TV shows, actors...",
     "signIn": "Sign In",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "profile": "My Profile"
   },
   "home": {
     "trendingMovies": "🔥 Trending Movies",
@@ -125,5 +126,20 @@
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
     "rights": "All rights reserved."
+  },
+  "logout": {
+    "title": "Are you sure you wanna leave, Spidy?",
+    "subtitle": "We'll miss you! Your watchlist will be waiting.",
+    "stay": "Nah, Stay!",
+    "leave": "Yes, Leave"
+  },
+  "profile": {
+    "title": "My Profile",
+    "displayName": "Display Name",
+    "enterName": "Enter your name",
+    "chooseAvatar": "Choose Avatar",
+    "saveChanges": "Save Changes",
+    "saved": "Profile updated successfully!",
+    "nameRequired": "Name is required"
   }
 }

@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useWatchlist } from '../context/WatchlistContext';
 import { searchMulti } from '../api/tmdb';
 import LanguageSwitcher from './LanguageSwitcher';
+import LogoutModal from './LogoutModal';
 import './Navbar.css';
 
 function Navbar() {
@@ -13,6 +14,7 @@ function Navbar() {
   const [searchOpen, setSearchOpen]   = useState(false);
   const [menuOpen, setMenuOpen]       = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const [query, setQuery]             = useState('');
   const [results, setResults]         = useState([]);
   const [liveLoading, setLiveLoading] = useState(false);
@@ -105,6 +107,7 @@ function Navbar() {
   };
 
   return (
+    <>
     <header className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
       {/* Logo */}
       <Link to="/" className="navbar__logo">
@@ -173,10 +176,13 @@ function Navbar() {
                     </div>
                   </div>
                   <hr />
+                  <Link to="/profile" onClick={() => setProfileOpen(false)}>
+                    {t('nav.profile', 'My Profile')}
+                  </Link>
                   <Link to="/watchlist" onClick={() => setProfileOpen(false)}>
                     {t('nav.watchlist')}
                   </Link>
-                  <button className="logout" onClick={() => { logout(); setProfileOpen(false); }}>
+                  <button className="logout" onClick={() => { setProfileOpen(false); setLogoutModalOpen(true); }}>
                     {t('nav.signOut')}
                   </button>
                 </motion.div>
@@ -284,7 +290,15 @@ function Navbar() {
         )}
       </AnimatePresence>
     </header>
+
+      <LogoutModal
+        isOpen={logoutModalOpen}
+        onConfirm={() => { logout(); setLogoutModalOpen(false); }}
+        onCancel={() => setLogoutModalOpen(false)}
+      />
+    </>
   );
 }
+
 
 export default Navbar;
